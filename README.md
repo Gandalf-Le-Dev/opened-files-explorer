@@ -22,10 +22,10 @@ After installation, the 'Opened Files Explorer' will appear in the Explorer view
 Contributions to 'Opened Files Explorer' are welcome and appreciated. You can contribute in various ways such as submitting bug reports, suggesting enhancements, and creating pull requests for new features or bug fixes.
 
 ## Support
-If you encounter any issues or have any suggestions, please open an issue on the [GitHub repository](#).
+If you encounter any issues or have any suggestions, please open an issue on the [GitHub repository](https://github.com/Gandalf-Le-Dev/opened-files-explorer/tree/main?tab=readme-ov-file).
 
 ## License
-This extension is released under the [MIT License](LICENSE).
+This extension is released under the [MIT License](https://github.com/Gandalf-Le-Dev/opened-files-explorer/blob/main/LICENSE).
 
 ## Acknowledgments
 Thanks to the Visual Studio Code community for the continuous support and inspiration in building tools that enhance our development experience.
