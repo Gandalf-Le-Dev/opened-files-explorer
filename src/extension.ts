@@ -142,47 +142,51 @@ export class OpenedFilesProvider implements vscode.TreeDataProvider<vscode.TreeI
 			.map(doc => new FileTreeItem(doc.uri));
 	}
 
-
 	private buildFolderTree(): vscode.TreeItem[]
 	{
-		const workspaceRoot = this.getWorkspaceRoot();
-		if (!workspaceRoot)
+		const workspaceRootPath = this.getWorkspaceRoot();
+		if (!workspaceRootPath)
 		{
 			return []; // No workspace open
 		}
 
-		const rootItem = new FolderTreeItem(vscode.Uri.file(workspaceRoot));
-		const allItems: { [key: string]: FolderTreeItem } = { [workspaceRoot]: rootItem };
+		const rootItem = new FolderTreeItem(vscode.Uri.file(workspaceRootPath));
+		const folderItems: { [key: string]: FolderTreeItem } = { [workspaceRootPath]: rootItem };
 
 		this.openedFiles.filter(doc => doc.fileName.endsWith(".git") === false).forEach(doc =>
 		{
-			let currentPath = doc.uri.fsPath;
-			let parentPath = path.dirname(currentPath);
+			let filePath = doc.uri.fsPath;
+			let currentPath = path.dirname(filePath);
 
-			while (parentPath && parentPath.startsWith(workspaceRoot))
+			// Build the folder hierarchy up to the file
+			const foldersInPath = [];
+			while (currentPath && currentPath !== workspaceRootPath)
 			{
-				if (!allItems[parentPath])
-				{
-					allItems[parentPath] = new FolderTreeItem(vscode.Uri.file(parentPath));
-					let parentParentPath = path.dirname(parentPath);
-					if (allItems[parentParentPath])
-					{
-						allItems[parentParentPath].children.push(allItems[parentPath]);
-					}
-				}
-
-				if (allItems[parentPath].children.indexOf(allItems[currentPath]) === -1)
-				{
-					allItems[parentPath].children.push(new FileTreeItem(vscode.Uri.file(currentPath)));
-					break;
-				}
-
-				currentPath = parentPath;
-				parentPath = path.dirname(parentPath);
+				foldersInPath.unshift(currentPath); // Prepend to maintain order from root to file
+				currentPath = path.dirname(currentPath);
 			}
+
+			// Add folders and file to the tree
+			let parentFolder = rootItem;
+			foldersInPath.forEach(folderPath =>
+			{
+				if (!folderItems[folderPath])
+				{
+					const folderItem = new FolderTreeItem(vscode.Uri.file(folderPath));
+					folderItems[folderPath] = folderItem;
+					parentFolder.children.push(folderItem);
+				}
+				parentFolder = folderItems[folderPath];
+			});
+
+			// Add the file to its immediate parent folder
+			parentFolder.children.push(new FileTreeItem(doc.uri));
 		});
 
 		return [rootItem];
 	}
 
+
 }
+
+//filter(doc => doc.fileName.endsWith(".git") === false)
