@@ -1,6 +1,7 @@
 {
   "name": "opened-files-explorer",
   "displayName": "opened-files-explorer",
+  "publisher": "Gandalf-Le-Dev",
   "description": "",
   "version": "0.0.1",
   "engines": {
